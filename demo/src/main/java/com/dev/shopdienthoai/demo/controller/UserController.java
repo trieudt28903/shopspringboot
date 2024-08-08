@@ -6,6 +6,7 @@ import com.dev.shopdienthoai.demo.error.IdInvalidException;
 import com.dev.shopdienthoai.demo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,9 +14,10 @@ import java.util.List;
 
 public class UserController {
     private final UserService userService;
-
-    public UserController(UserService userService) {
+    private final PasswordEncoder passwordEncoder;
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUser() {
@@ -30,6 +32,8 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<User> createNewUser(@RequestBody User user){
+        String hashPassword=this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashPassword);
         User userCreate=userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreate);
     }

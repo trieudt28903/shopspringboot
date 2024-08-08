@@ -24,6 +24,10 @@ public class FormatException implements ResponseBodyAdvice<Object> {
         int status = httpResponse.getStatus();
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatus(status);
+        if(body instanceof String)
+        {
+            return body;
+        }
         if(status>=400){
             return body;
         }else {
