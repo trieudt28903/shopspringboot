@@ -13,9 +13,10 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final AuthenticationEntryPoint delegate=new BearerTokenAuthenticationEntryPoint();
+    private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
     private final ObjectMapper mapper;
 
     public CustomAuthenticationEntryPoint(ObjectMapper mapper) {
@@ -24,12 +25,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        this.delegate.commence(request,response,authException);
+        this.delegate.commence(request, response, authException);
         response.setContentType("application/json;charset=UTF-8");
-        RestResponse<Object> rest=new RestResponse<>();
+        RestResponse<Object> rest = new RestResponse<>();
         rest.setStatus(HttpStatus.UNAUTHORIZED.value());
         rest.setErrorMessage(authException.getCause().getMessage());
         rest.setMessage("Token không hợp lệ(hết hạn , không đúng định dạng");
-        mapper.writeValue(response.getWriter(),rest);
+        mapper.writeValue(response.getWriter(), rest);
     }
 }

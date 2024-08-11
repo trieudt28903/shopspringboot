@@ -36,39 +36,44 @@ public class SecurityConfiguration {
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-    private SecretKey getSecretKey(){
-        byte [] keyBytes= Base64.from(jwtKey).decode();
-        return new SecretKeySpec(keyBytes,0,keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
+
+    private SecretKey getSecretKey() {
+        byte[] keyBytes = Base64.from(jwtKey).decode();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
     }
+
     @Bean
-    public JwtEncoder jwtEncoder(){
+    public JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
     }
+
     @Bean
-    public JwtDecoder jwtDecoder(){
-        NimbusJwtDecoder jwtDecoder =NimbusJwtDecoder.withSecretKey(
+    public JwtDecoder jwtDecoder() {
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
         return token -> {
-            try{
+            try {
                 return jwtDecoder.decode(token);
-            }catch (Exception e){
-                System.out.println(">>> JWT error: "+e.getMessage());
+            } catch (Exception e) {
+                System.out.println(">>> JWT error: " + e.getMessage());
                 throw e;
             }
         };
     }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity,CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         httpSecurity
-                .csrf(c->c.disable())
+                .csrf(c -> c.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/login").permitAll()
-                        .anyRequest().authenticated()).oauth2ResourceServer((oauth2)->oauth2.jwt(Customizer.withDefaults())
+                        .requestMatchers("/", "/login").permitAll()
+                        .anyRequest().authenticated()).oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
 
-                .formLogin(f->f.disable())
-                   .exceptionHandling(exeptions->exeptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                           .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                .formLogin(f -> f.disable())
+                .exceptionHandling(exeptions -> exeptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );

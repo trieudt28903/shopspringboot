@@ -18,22 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
+
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO){
+    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         // nạp input gồm username/password vào security
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
         //xác thực người dùng => cần viết hàm loadUserByUsername
-        Authentication authentication=authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         //create a token
-        String access_token=this.securityUtil.createToken(authentication);
+        String access_token = this.securityUtil.createToken(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        ResLoginDTO res=new ResLoginDTO();
+        ResLoginDTO res = new ResLoginDTO();
         res.setAccessToken(access_token);
         return ResponseEntity.ok().body(res);
     }
