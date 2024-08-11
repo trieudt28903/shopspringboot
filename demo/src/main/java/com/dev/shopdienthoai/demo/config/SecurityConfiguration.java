@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
@@ -79,4 +81,25 @@ public class SecurityConfiguration {
                 );
         return httpSecurity.build();
     }
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        // Tạo một đối tượng JwtGrantedAuthoritiesConverter
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        // Đặt prefix cho authority thành một chuỗi rỗng (không có prefix)
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        // Đặt tên claim sẽ chứa thông tin quyền hạn trong JWT thành "hoidanit"
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("hoidanit");
+
+        // Tạo một đối tượng JwtAuthenticationConverter
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+
+        // Thiết lập JwtGrantedAuthoritiesConverter vừa tạo cho JwtAuthenticationConverter
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
+        // Trả về đối tượng JwtAuthenticationConverter đã được cấu hình
+        return jwtAuthenticationConverter;
+    }
+
 }

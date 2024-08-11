@@ -1,5 +1,6 @@
 package com.dev.shopdienthoai.demo.domain;
 
+import com.dev.shopdienthoai.demo.until.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -49,7 +50,7 @@ public class Company {
     }
     @PrePersist
     protected void handleBeforeCreate() {
-        this.createdBy="trieu le";
+        this.createdBy= SecurityUtil.getCurrentUserLogin().isPresent()==true?SecurityUtil.getCurrentUserLogin().get():null;
         this.createdAt = Instant.now();
     }
 }
