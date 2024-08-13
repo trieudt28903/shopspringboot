@@ -5,8 +5,10 @@ import com.dev.shopdienthoai.demo.domain.User;
 import com.dev.shopdienthoai.demo.domain.dto.ResultPaginationDTO;
 import com.dev.shopdienthoai.demo.error.IdInvalidException;
 import com.dev.shopdienthoai.demo.service.UserService;
+import com.turkraft.springfilter.boot.Filter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,12 +26,9 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
     @GetMapping("/users")
-    public ResponseEntity<ResultPaginationDTO> getAllUser(@RequestParam("current") Optional<String> currentOptional ,
-                                                          @RequestParam("pageSize") Optional<String> pageSizeOptional) {
-        String sCurrent=currentOptional.isPresent()?currentOptional.get():"";
-        String sPageSize=pageSizeOptional.isPresent()?pageSizeOptional.get():"";
-        Pageable pageable= PageRequest.of(Integer.parseInt(sCurrent)-1,Integer.parseInt(sPageSize));
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers(pageable));
+    public ResponseEntity<ResultPaginationDTO> getAllUser(@Filter Specification<User> spec,Pageable pageable) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers(spec,pageable));
     }
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {

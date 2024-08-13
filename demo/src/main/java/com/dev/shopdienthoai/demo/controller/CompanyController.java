@@ -1,13 +1,19 @@
 package com.dev.shopdienthoai.demo.controller;
 
 import com.dev.shopdienthoai.demo.domain.Company;
+import com.dev.shopdienthoai.demo.domain.dto.ResultPaginationDTO;
 import com.dev.shopdienthoai.demo.service.CompanyService;
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CompanyController {
@@ -23,9 +29,8 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createCompany);
     }
     @GetMapping("/companies")
-    public ResponseEntity<List<Company>> getAllCompanies() {
-        List<Company> companyList=this.companyService.getAllCompany();
-        return ResponseEntity.status(HttpStatus.OK).body(companyList);
+    public ResponseEntity<ResultPaginationDTO> getAllCompanies(@Filter Specification<Company>spec, Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.getAllCompany(spec,pageable));
     }
     @PutMapping("/companies")
     public ResponseEntity<Company> updateCompany(@Valid @RequestBody Company company) {

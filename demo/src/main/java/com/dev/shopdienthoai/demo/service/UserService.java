@@ -7,6 +7,7 @@ import com.dev.shopdienthoai.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,18 +23,18 @@ public class UserService {
     public void deleteUser(Long id){
         this.userRepository.deleteById(id);
     }
-    public ResultPaginationDTO getAllUsers(Pageable pageable){
-        Page<User> pageUser = userRepository.findAll(pageable);
+    public ResultPaginationDTO getAllUsers(Specification<User> specification,Pageable pageable){
+        Page<User> pageUser = userRepository.findAll(specification,pageable);
         ResultPaginationDTO rs=new ResultPaginationDTO();
         Meta meta=new Meta();
         //trang hiện tại
-        meta.setPage(pageUser.getNumber());
+        meta.setPage(pageable.getPageNumber()+1);
         //tổng số phần tử trang hiện tại
         meta.setTotal(pageUser.getTotalElements());
         //tổng số trang
         meta.setPages(pageUser.getTotalPages());
         //tổng số phần tử
-        meta.setPageSize(pageUser.getSize());
+        meta.setPageSize(pageable.getPageSize());
 
         rs.setMeta(meta);
         rs.setResult(pageUser.getContent());
