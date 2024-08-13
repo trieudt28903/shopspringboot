@@ -1,6 +1,7 @@
 package com.dev.shopdienthoai.demo.until;
 
 import com.dev.shopdienthoai.demo.domain.RestResponse;
+import com.dev.shopdienthoai.demo.until.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -31,9 +32,10 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         if(status>=400){
             return body;
         }else {
-            restResponse.setMessage("CALL API SUCCESS");
-            restResponse.setData(body);
 
+            restResponse.setData(body);
+            ApiMessage message=returnType.getMethodAnnotation(ApiMessage.class);
+            restResponse.setMessage(message!=null?message.value():"CALL API SUCCESS");
         }
         return restResponse;
     }

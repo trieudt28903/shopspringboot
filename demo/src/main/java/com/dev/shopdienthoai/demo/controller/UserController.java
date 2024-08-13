@@ -3,18 +3,16 @@ package com.dev.shopdienthoai.demo.controller;
 
 import com.dev.shopdienthoai.demo.domain.User;
 import com.dev.shopdienthoai.demo.domain.dto.ResultPaginationDTO;
-import com.dev.shopdienthoai.demo.error.IdInvalidException;
+import com.dev.shopdienthoai.demo.until.annotation.ApiMessage;
+import com.dev.shopdienthoai.demo.until.error.IdInvalidException;
 import com.dev.shopdienthoai.demo.service.UserService;
 import com.turkraft.springfilter.boot.Filter;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 
@@ -26,6 +24,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
     @GetMapping("/users")
+    @ApiMessage("fetch all users")
     public ResponseEntity<ResultPaginationDTO> getAllUser(@Filter Specification<User> spec,Pageable pageable) {
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers(spec,pageable));

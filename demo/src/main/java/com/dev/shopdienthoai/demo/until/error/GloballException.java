@@ -1,4 +1,4 @@
-package com.dev.shopdienthoai.demo.error;
+package com.dev.shopdienthoai.demo.until.error;
 
 import com.dev.shopdienthoai.demo.domain.RestResponse;
 import org.springframework.http.HttpStatus;
