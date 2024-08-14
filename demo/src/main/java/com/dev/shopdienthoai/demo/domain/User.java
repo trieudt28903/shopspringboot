@@ -1,9 +1,16 @@
 package com.dev.shopdienthoai.demo.domain;
 
+import com.dev.shopdienthoai.demo.until.constant.GenderEnum;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "user")
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,45 +18,14 @@ public class User {
     private String name;
     private String email;
     private String password;
-    public User(){
+    private int age;
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
 
-    };
-    public User(String name, Long id, String password, String email) {
-        this.name = name;
-        this.id = id;
-        this.password = password;
-        this.email = email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    private String address;
+    private String refreshToken;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String createdBy;
+    private String updatedBy;
 }
